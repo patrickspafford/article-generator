@@ -1,5 +1,5 @@
 # article-generator
-An Article Generator using Neural Nets - Team 1.0 - Artificial Intelligence (Fall 2020)
+An Article Generator using Tensorflow's LSTM - Team 1.0 - Artificial Intelligence (Fall 2020)
 
 Database: https://webhose.io/free-datasets/sports-news-articles/
 
