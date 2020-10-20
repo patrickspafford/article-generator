@@ -1,6 +1,8 @@
 # article-generator
 An Article Generator using Neural Nets - Team 1.0 - Artificial Intelligence (Fall 2020)
 
+Database: https://webhose.io/free-datasets/sports-news-articles/
+
 Robot Says:
  fast starts inside that do emsise, it's those docks against finate," thoul two-uson twingled the migmalicial car.im.
 toll's but buy (28-2-2) the paral boundfor price we really state, at south with openaybas cleveland, kill pita's in two-of i said a longer offices in the preseason self for one off month, where no-need the bulldel in mont. metter, but enoulk after minutes
