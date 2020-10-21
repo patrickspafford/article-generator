@@ -14,6 +14,7 @@ import random
 import os
 import json
 import numpy as np
+from spellchecker import Spellchecker
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import RMSprop
@@ -49,7 +50,6 @@ class LSTM_RNN:
             x_predictions = np.zeros((1, self.length_seq, len(self.characters)))
             for t, char in enumerate(sentence):
                 x_predictions[0, t, self.char_to_ndx[char]] = 1
-
             predictions = self.model.predict(x_predictions, verbose=0)[0]
             next_index = self.sample(predictions,
                                     temperature)
@@ -116,6 +116,20 @@ class LSTM_RNN:
         # run this once
         self.model.save('textgen.model')
 
+    def scoreTextForGrammaticalCorrectness(self, article):
+        score = 0
+        articleChecker = Spellchecker()
+        wordsInArticle = text.split()
+        totalWords = len(wordsInArticle)
+        correctlySpelledWords = articleChecker.unknown(wordsInArticle)
+        numIncorrectWords = len(articleChecker.known(wordsInArticle))
+        for word in correctlySpelledWords:
+            score += len(word) # Reward a text for having longer words
+        score -= numIncorrectWords
+        score /= totalWords
+        return score
+
+    
 
 
 if __name__ == "__main__":
