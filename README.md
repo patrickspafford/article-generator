@@ -2,8 +2,8 @@
 An Article Generator using Tensorflow's LSTM - Team 1.0 - Artificial Intelligence (Fall 2020)
 
 Team Members:
-Omar Barazanji
-Patrick Spafford
+Omar Barazanji,
+Patrick Spafford,
 Seth Kinsaul
 
 
