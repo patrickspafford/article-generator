@@ -121,8 +121,8 @@ class LSTM_RNN:
         articleChecker = Spellchecker()
         wordsInArticle = text.split()
         totalWords = len(wordsInArticle)
-        correctlySpelledWords = articleChecker.unknown(wordsInArticle)
-        numIncorrectWords = len(articleChecker.known(wordsInArticle))
+        numIncorrectWords = articleChecker.unknown(wordsInArticle)
+        correctlySpelledWords = len(articleChecker.known(wordsInArticle))
         for word in correctlySpelledWords:
             score += len(word) # Reward a text for having longer words
         score -= numIncorrectWords
