@@ -133,5 +133,5 @@ if __name__ == "__main__":
         network.grab_text(cached=False)
         network.model = tf.keras.models.load_model('textgen.model')
 
-    print(network.generate_text(100, 1.0))
+    print(network.generate_text(300, 1.0))
     print("\n The end.\n")
