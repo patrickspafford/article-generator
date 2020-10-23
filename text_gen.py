@@ -14,7 +14,7 @@ import random
 import os
 import json
 import numpy as np
-from spellchecker import Spellchecker
+from spellchecker import SpellChecker
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import RMSprop
@@ -57,10 +57,9 @@ class LSTM_RNN:
 
             generated += next_character
             sentence = sentence[1:] + next_character
-        print("Robot says: \n")
         return generated
 
-    def grab_text(self, cached=True):
+    def grab_text(self, cached):
         str_size = 7
         big_text = ''
 
@@ -116,36 +115,52 @@ class LSTM_RNN:
         # run this once
         self.model.save('textgen.model')
 
+
     def scoreTextForGrammaticalCorrectness(self, article):
         score = 0
-        articleChecker = Spellchecker()
-        wordsInArticle = text.split()
+        articleChecker = SpellChecker()
+        wordsInArticle = article.split()
         totalWords = len(wordsInArticle)
         numIncorrectWords = len(articleChecker.unknown(wordsInArticle))
         correctlySpelledWords = articleChecker.known(wordsInArticle)
         for word in correctlySpelledWords:
             score += len(word) # Reward a text for having longer words
         score -= numIncorrectWords
-        score /= totalWords
+        score = totalWords
         return score
 
-    
 
+    def find_best_article(self,trials):
+        generated_articles = dict()
+        scores = []
+        print("Finding best article...")
+        for i,x in enumerate(range(trials)):
+            eta_percent = ((i+1)/trials)*100
+            generated = self.generate_text(300, 0.5)
+            score = self.scoreTextForGrammaticalCorrectness(generated)
+            generated_articles[score] = generated
+            scores.append(score)
+            print("Progress: %d%%, score: %d" % (eta_percent,score))
+        best = max(scores)
+        print("Robot says: \n")
+        return generated_articles[best]
 
 if __name__ == "__main__":
     initial = False # Change to true if first time...
+    sample_size = 3000
 
     print("Please wait while the robot types a story...\n")
 
     if initial: # initial setup
-        network = LSTM_RNN(3000)
-        network.grab_text()
+        network = LSTM_RNN(sample_size)
+        network.grab_text(cached=False)
         network.train()
 
     else:       # run pre-trained neural network
-        network = LSTM_RNN(3000)
-        network.grab_text(cached=False)
+        network = LSTM_RNN(sample_size)
+        network.grab_text(cached=True)
         network.model = tf.keras.models.load_model('textgen.model')
 
-    print(network.generate_text(300, 1.0))
+    print(network.find_best_article(30))
+
     print("\n The end.\n")
