@@ -78,7 +78,7 @@ class LSTM_RNN:
             with open('text.txt', 'w') as w:
                 w.write(big_text)
 
-        self.text = open("datasets/yelp_text.txt", 'rb').read().decode(encoding='utf-8').lower()
+        self.text = open("big_texts/yelp_text.txt", 'rb').read().decode(encoding='utf-8').lower()
         self.characters = sorted(set(self.text))
         self.char_to_ndx = dict((c, i) for i, c in enumerate(self.characters))
         self.ndx_to_char = dict((i, c) for i, c in enumerate(self.characters))
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     initial = False # Change to true if first time...
     sample_size = 3000
 
-    brain = 'yelp.model' # select model 
+    brain = 'models/yelp.model' # select model 
 
     print("Please wait while the robot types a story...\n")
 
