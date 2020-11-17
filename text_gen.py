@@ -46,8 +46,8 @@ class LSTM_RNN:
     def generate_text(self, length, temperature):
         start_index = random.randint(0, len(self.text) - self.length_seq - 1)
         generated = ''
-        #sentence = self.text[start_index: start_index + self.length_seq] # random promt from sample.
-        sentence = 'this season is starting off bad for the panthers. ' # must be 50 char (this is the prompt)
+        sentence = self.text[start_index: start_index + self.length_seq] # random promt from sample.
+        #sentence = 'this season is starting off bad for the panthers. ' # must be 50 char (this is the prompt)
         generated += sentence
         for i in range(length):
             x_predictions = np.zeros((1, self.length_seq, len(self.characters)))
@@ -81,7 +81,7 @@ class LSTM_RNN:
             with open('text.txt', 'w') as w:
                 w.write(big_text)
 
-        self.text = open("big_texts/sports.txt", 'rb').read().decode(encoding='utf-8').lower()
+        self.text = open("big_texts/trump.txt", 'rb').read().decode(encoding='utf-8').lower()
         self.characters = sorted(set(self.text))
         self.char_to_ndx = dict((c, i) for i, c in enumerate(self.characters))
         self.ndx_to_char = dict((i, c) for i, c in enumerate(self.characters))
@@ -116,10 +116,9 @@ class LSTM_RNN:
         self.model.fit(x, y, batch_size=256, epochs=4)
 
         # run this once
-        self.model.save('sports.model')
+        self.model.save('trump.model')
 
 
-    # author: Patrick Spafford
     def scoreTextForGrammaticalCorrectness(self, article):
         score = 0
         articleChecker = SpellChecker()
@@ -150,10 +149,10 @@ class LSTM_RNN:
         return generated_articles[best]
 
 if __name__ == "__main__":
-    initial = False # Change to true if first time...
+    initial = True # Change to true if first time...
     sample_size = 3000
 
-    brain = 'models/sports.model' # select model 
+    brain = 'models/trump.model' # select model 
 
     print("Please wait while the robot types a story...\n")
 
@@ -167,6 +166,6 @@ if __name__ == "__main__":
         network.grab_text(cached=True)
         network.model = tf.keras.models.load_model(brain)
 
-    print(network.find_best_article(50))
+    print(network.find_best_article(1))
 
     print("\n The end.\n")
