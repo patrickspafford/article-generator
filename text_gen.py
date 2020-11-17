@@ -4,6 +4,8 @@
     Final project for Auburn University's COMP 5660.
 @author(s):
     Omar Barazanji
+    Patrick Spafford
+    Seth Kinsaul
 @date: 
     10/19/2020
 @sources: 
@@ -28,7 +30,7 @@ class LSTM_RNN:
     def __init__(self, article_count=0):
         self.count = article_count
         self.text = ''
-        self.length_seq = 50
+        self.length_seq = 50 
         self.model = Sequential()
 
     # from official Keras docs
@@ -44,7 +46,8 @@ class LSTM_RNN:
     def generate_text(self, length, temperature):
         start_index = random.randint(0, len(self.text) - self.length_seq - 1)
         generated = ''
-        sentence = self.text[start_index: start_index + self.length_seq]
+        #sentence = self.text[start_index: start_index + self.length_seq] # random promt from sample.
+        sentence = 'this season is starting off bad for the panthers. ' # must be 50 char (this is the prompt)
         generated += sentence
         for i in range(length):
             x_predictions = np.zeros((1, self.length_seq, len(self.characters)))
@@ -78,7 +81,7 @@ class LSTM_RNN:
             with open('text.txt', 'w') as w:
                 w.write(big_text)
 
-        self.text = open("big_texts/yelp_text.txt", 'rb').read().decode(encoding='utf-8').lower()
+        self.text = open("big_texts/sports.txt", 'rb').read().decode(encoding='utf-8').lower()
         self.characters = sorted(set(self.text))
         self.char_to_ndx = dict((c, i) for i, c in enumerate(self.characters))
         self.ndx_to_char = dict((i, c) for i, c in enumerate(self.characters))
@@ -113,9 +116,10 @@ class LSTM_RNN:
         self.model.fit(x, y, batch_size=256, epochs=4)
 
         # run this once
-        self.model.save('yelp.model')
+        self.model.save('sports.model')
 
 
+    # author: Patrick Spafford
     def scoreTextForGrammaticalCorrectness(self, article):
         score = 0
         articleChecker = SpellChecker()
@@ -129,14 +133,14 @@ class LSTM_RNN:
         score = totalWords
         return score
 
-
+    # uses the above function to find the best article generated out of N trials
     def find_best_article(self,trials):
         generated_articles = dict()
         scores = []
         print("Finding best article...")
         for i,x in enumerate(range(trials)):
             eta_percent = ((i+1)/trials)*100
-            generated = self.generate_text(400, 0.7)
+            generated = self.generate_text(1000, 0.7)
             score = self.scoreTextForGrammaticalCorrectness(generated)
             generated_articles[score] = generated
             scores.append(score)
@@ -149,7 +153,7 @@ if __name__ == "__main__":
     initial = False # Change to true if first time...
     sample_size = 3000
 
-    brain = 'models/yelp.model' # select model 
+    brain = 'models/sports.model' # select model 
 
     print("Please wait while the robot types a story...\n")
 
@@ -163,6 +167,6 @@ if __name__ == "__main__":
         network.grab_text(cached=True)
         network.model = tf.keras.models.load_model(brain)
 
-    print(network.find_best_article(10))
+    print(network.find_best_article(50))
 
     print("\n The end.\n")
