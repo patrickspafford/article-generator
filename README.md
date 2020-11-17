@@ -6,7 +6,7 @@ Omar Barazanji,
 Patrick Spafford,
 Seth Kinsaul
 
-#morty.model example: 
+# morty.model example: 
 
 input:
 “morty: rick, are you beth?”
