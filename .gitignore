@@ -2,3 +2,6 @@ database/
 texts/
 datasets/
 trump/
+lib/
+bin/
+.vscode/
