@@ -16,11 +16,11 @@ import random
 import os
 import json
 import numpy as np
-from spellchecker import SpellChecker
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.layers import Activation, Dense, LSTM
+from scoring import scoreTextForGrammaticalCorrectness, scoreTextForSpellingCorrectness
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR) # turn off errors
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -118,20 +118,6 @@ class LSTM_RNN:
         # run this once
         self.model.save('trump.model')
 
-
-    def scoreTextForGrammaticalCorrectness(self, article):
-        score = 0
-        articleChecker = SpellChecker()
-        wordsInArticle = article.split()
-        totalWords = len(wordsInArticle)
-        numIncorrectWords = len(articleChecker.unknown(wordsInArticle))
-        correctlySpelledWords = articleChecker.known(wordsInArticle)
-        for word in correctlySpelledWords:
-            score += len(word) # Reward a text for having longer words
-        score -= numIncorrectWords
-        score = totalWords
-        return score
-
     # uses the above function to find the best article generated out of N trials
     def find_best_article(self,trials):
         generated_articles = dict()
@@ -140,7 +126,7 @@ class LSTM_RNN:
         for i,x in enumerate(range(trials)):
             eta_percent = ((i+1)/trials)*100
             generated = self.generate_text(1000, 0.7)
-            score = self.scoreTextForGrammaticalCorrectness(generated)
+            score = scoreTextForGrammaticalCorrectness(generated) + scoreTextForSpellingCorrectness(generated)
             generated_articles[score] = generated
             scores.append(score)
             print("Progress: %d%%, score: %d" % (eta_percent,score))
