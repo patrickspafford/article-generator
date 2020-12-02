@@ -13,6 +13,7 @@
 '''
 
 import random
+import subprocess
 import os
 import json
 import numpy as np
@@ -81,7 +82,7 @@ class LSTM_RNN:
             with open('text.txt', 'w') as w:
                 w.write(big_text)
 
-        self.text = open("big_texts/sports.txt", 'rb').read().decode(encoding='utf-8').lower()
+        self.text = open("big_texts/yelp.txt", 'rb').read().decode(encoding='utf-8').lower()
         self.characters = sorted(set(self.text))
         self.char_to_ndx = dict((c, i) for i, c in enumerate(self.characters))
         self.ndx_to_char = dict((i, c) for i, c in enumerate(self.characters))
@@ -126,7 +127,10 @@ class LSTM_RNN:
         for i,x in enumerate(range(trials)):
             eta_percent = ((i+1)/trials)*100
             generated = self.generate_text(500, 0.6)
-            score = scoreTextForGrammaticalCorrectness(generated) + scoreTextForSpellingCorrectness(generated)
+            try:
+                score = scoreTextForGrammaticalCorrectness(generated) + scoreTextForSpellingCorrectness(generated)
+            except subprocess.CalledProcessError:
+                continue
             generated_articles[score] = generated
             scores.append(score)
             print("Progress: %d%%, score: %d" % (eta_percent,score))
@@ -138,7 +142,7 @@ if __name__ == "__main__":
     initial = False # Change to true if first time... (only for training new model)
     sample_size = 3000
 
-    brain = 'models/sports.model' # select model 
+    brain = 'models/yelp128_3.model' # select model 
 
     print("Please wait while the robot types a story...\n")
 
@@ -152,7 +156,7 @@ if __name__ == "__main__":
         network.grab_text(cached=True)
         network.model = tf.keras.models.load_model(brain)
 
-    print(network.find_best_article(10))
+    print(network.find_best_article(30))
 
     print("\n The end.\n")
 
