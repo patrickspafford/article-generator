@@ -81,7 +81,7 @@ class LSTM_RNN:
             with open('text.txt', 'w') as w:
                 w.write(big_text)
 
-        self.text = open("big_texts/trump.txt", 'rb').read().decode(encoding='utf-8').lower()
+        self.text = open("big_texts/yelp.txt", 'rb').read().decode(encoding='utf-8').lower()
         self.characters = sorted(set(self.text))
         self.char_to_ndx = dict((c, i) for i, c in enumerate(self.characters))
         self.ndx_to_char = dict((i, c) for i, c in enumerate(self.characters))
@@ -116,7 +116,7 @@ class LSTM_RNN:
         self.model.fit(x, y, batch_size=256, epochs=4)
 
         # run this once
-        self.model.save('trump.model')
+        self.model.save('yelp128_2.model')
 
     # uses the above function to find the best article generated out of N trials
     def find_best_article(self,trials):
@@ -125,7 +125,7 @@ class LSTM_RNN:
         print("Finding best article...")
         for i,x in enumerate(range(trials)):
             eta_percent = ((i+1)/trials)*100
-            generated = self.generate_text(1000, 0.7)
+            generated = self.generate_text(500, 0.6)
             score = scoreTextForGrammaticalCorrectness(generated) + scoreTextForSpellingCorrectness(generated)
             generated_articles[score] = generated
             scores.append(score)
@@ -135,10 +135,10 @@ class LSTM_RNN:
         return generated_articles[best]
 
 if __name__ == "__main__":
-    initial = True # Change to true if first time...
+    initial = False # Change to true if first time... (only for training new model)
     sample_size = 3000
 
-    brain = 'models/trump.model' # select model 
+    brain = 'models/yelp128_4.model' # select model 
 
     print("Please wait while the robot types a story...\n")
 
@@ -152,6 +152,6 @@ if __name__ == "__main__":
         network.grab_text(cached=True)
         network.model = tf.keras.models.load_model(brain)
 
-    print(network.find_best_article(1))
+    print(network.find_best_article(30))
 
     print("\n The end.\n")
