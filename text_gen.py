@@ -82,7 +82,7 @@ class LSTM_RNN:
             with open('text.txt', 'w') as w:
                 w.write(big_text)
 
-        self.text = open("big_texts/yelp.txt", 'rb').read().decode(encoding='utf-8').lower()
+        self.text = open("big_texts/midi.txt", 'rb').read().decode(encoding='utf-8').lower()
         self.characters = sorted(set(self.text))
         self.char_to_ndx = dict((c, i) for i, c in enumerate(self.characters))
         self.ndx_to_char = dict((i, c) for i, c in enumerate(self.characters))
@@ -102,22 +102,29 @@ class LSTM_RNN:
 
         for i, sent in enumerate(sentences):
             for t, char in enumerate(sent):
+                # for sentence i and char t in i, set char# to 1 from sorted char_to_ndx map.
                 x[i, t, self.char_to_ndx[char]] = 1
+            # for sentence i, set char# to 1 from sorted char_to_ndx map.
             y[i, self.char_to_ndx[next_char[i]]] = 1
 
 
         # building RNN
+
+        # model with 128 neurons, size "sentence length (inputs) by character array size (labels)"
         self.model.add(LSTM(128, input_shape=(self.length_seq, len(self.characters))))
+
+        # hidden layer with character array size (1 neuron per character in this layer)
         self.model.add(Dense(len(self.characters)))
 
         # scales values to add up to 100%
         self.model.add(Activation('softmax'))
 
         self.model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=0.01))
+
         self.model.fit(x, y, batch_size=256, epochs=4)
 
         # run this once
-        self.model.save('yelp128_4.model')
+        self.model.save('midi.model')
 
     # uses the above function to find the best article generated out of N trials
     def find_best_article(self,trials):
@@ -139,7 +146,7 @@ class LSTM_RNN:
         return generated_articles[best]
 
 if __name__ == "__main__":
-    initial = False # Change to true if first time... (only for training new model)
+    initial = True # Change to true if first time... (only for training new model)
     sample_size = 3000
 
     brain = 'models/yelp128_3.model' # select model 
